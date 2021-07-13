@@ -28,7 +28,7 @@ Width = {'thin': 1,
 
 def help():
     print('Usage:\n',
-          'python mkm.py fonts.zip\n')
+          'python mkm.py path-to-sarasa-fonts.7z\n')
     return
 
 
