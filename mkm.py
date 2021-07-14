@@ -3,6 +3,7 @@
 @作者: 风沐白
 @文件: mkm.py
 @描述: 由更纱黑体制作 magsik 字体模块
+@版本: v1.0.1
 '''
 
 import os
@@ -37,7 +38,7 @@ def extra_fonts(filename: str, fontname: str):
     print('from {} extra {} fonts ...'.format(filename, fontname))
     with py7zr.SevenZipFile(filename, 'r') as z:
         allfiles = z.getnames()
-        filter_pattern = re.compile('{}.*'.format(fontname))
+        filter_pattern = re.compile('.*{}.*'.format(fontname))
         selected = [f for f in allfiles if 'italic' not in f and
                     filter_pattern.match(f)]
         if not os.path.exists('fonts'):
@@ -58,6 +59,7 @@ def zip_font_module():
             if w in f:
                 shutil.copy2('fonts/{}'.format(f),
                              'outs/system/fonts/fontw{}.ttf'.format(Width[w]))
+                break
     shutil.make_archive('{}-unhinted-{} ({})'.format(FontName, Version, VersionCode),
                         'zip',
                         'outs')
