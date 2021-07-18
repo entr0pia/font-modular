@@ -1,3 +1,7 @@
 .vscode
 *.7z
 *.zip
+*.pyc
+__pycache__
+fonts
+outs
