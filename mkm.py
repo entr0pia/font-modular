@@ -3,13 +3,14 @@
 @作者: 风沐白
 @文件: mkm.py
 @描述: 快速打包 Magsik 字体模块
-@版本: v2.0
+@版本: v2.0.1
 '''
 
 import os
 import sys
 import shutil
 import time
+import atexit
 from py7zr import pack_7zarchive, unpack_7zarchive
 from fontTools.ttLib import TTFont, TTLibError
 
@@ -143,7 +144,7 @@ def select_font(font_families: dict, family_name: str):
                       Version,
                       VersionCode,
                       '落霞孤鹜 [lxgwshare], entr0pia@Github',
-                      '{} with {} Weights'.format(FontName, len(selected)),
+                      '{} with {} Weight(s)'.format(FontName, len(selected)),
                       19000)
     return selected
 
@@ -168,11 +169,11 @@ def zip_font_module(selected_dict: dict):
                         'zip',
                         'outs')
 
-
+@atexit.register
 def clean():
     '''清理工作区'''
-    if os.path.exists(FontHomeDir):
-        shutil.rmtree(FontHomeDir)
+    if os.path.exists('fonts'):
+        shutil.rmtree('fonts')
     if os.path.exists('outs'):
         shutil.rmtree('outs')
 
@@ -206,4 +207,3 @@ if __name__ == '__main__':
     font_families = get_font_family()
     selected_dict = select_font(font_families, input_select(font_families))
     zip_font_module(selected_dict)
-    clean()

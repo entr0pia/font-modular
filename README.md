@@ -11,3 +11,4 @@ python mkm.py path_to_ttf_font(s)
 
 ## ToDo
 - 对TTC的支持
+- 对缺少```nameID=16```字体的兼容
