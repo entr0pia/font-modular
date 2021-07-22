@@ -10,11 +10,13 @@ import os
 import sys
 import shutil
 import time
+import getopt
+from getopt import GetoptError
 import atexit
 from py7zr import pack_7zarchive, unpack_7zarchive
 from fontTools.ttLib import TTFont, TTLibError
 
-
+Full = True
 FontName = None
 Version = None
 Prop = None
@@ -41,12 +43,10 @@ shutil.register_unpack_format('7zip',
 
 
 class FontFamily():
-    def __init__(self, font: TTFont) -> None:
-        self.name = []
+    def __init__(self, font: TTFont, name: str) -> None:
+        self.name = name
         for n in font['name'].names:
             s = n.toStr()
-            if n.nameID == 16:
-                self.name.append(s)
             if n.nameID == 5 and s.isascii():
                 self.version = s
         self.files = set()
@@ -90,7 +90,7 @@ class ModuleProp():
 
 def help():
     print('Usage:\n',
-          'python mkm.py path_to_ttf_font(s)\n')
+          'python [-s] mkm.py path_to_ttf_font(s)\n')
     return
 
 
@@ -105,12 +105,28 @@ def get_font_family():
         except TTLibError as e:
             print(e)
             exit()
+        except PermissionError as e:
+            print(e)
+            exit()
+        name1 = ''
+        has_name16 = False
         for n in font['name'].names:
             name = n.toStr()
-            if n.nameID == 16 and name.isascii():
-                if name not in font_families.keys():
-                    font_families[name] = FontFamily(font)
-                font_families[name].files.add(file_path)
+            if name.isascii():
+                if n.nameID == 16:
+                    has_name16 = True
+                    if name not in font_families.keys():
+                        font_families[name] = FontFamily(font, name)
+                    font_families[name].files.add(file_path)
+                    break
+                if n.nameID == 1:
+                    name1 = name
+        if not has_name16:
+            name = name1
+            if name not in font_families.keys():
+                font_families[name] = FontFamily(font, name)
+            font_families[name].files.add(file_path)
+
     return font_families
 
 
@@ -121,25 +137,51 @@ def extra_fonts(filename: str):
         global FontHomeDir
         FontHomeDir = filename
         return
-    shutil.unpack_archive(filename, FontHomeDir)
+    try:
+        shutil.unpack_archive(filename, FontHomeDir)
+    except Exception as e:
+        print(e)
+        print('解压失败, 请手动解压')
+        exit()
     return
 
 
 def select_font(font_families: dict, family_name: str):
     '''筛选字体'''
     global FontName, Version, Prop
-    FontName = family_name
-    Version = font_families[family_name].version
     # {file_path: width}
+    has_regular = False
     selected = dict()
-    for i in font_families[family_name].files:
+    files = []
+    if family_name != None:
+        files = font_families[family_name].files
+        FontName = family_name
+        Version = font_families[family_name].version
+    else:
+        for f in font_families.values():
+            files.extend(list(f.files))
+    for i in files:
         font = TTFont(i)
         # 跳过斜体
         if font['OS/2'].fsSelection & 1 == 1:
             continue
         selected[i] = Width[font['OS/2'].usWeightClass]
+        if selected[i] == 4:
+            has_regular = True
+            if family_name == None:
+                for n in font['name'].names:
+                    name = n.toStr()
+                    if name.isascii():
+                        if n.nameID == 1:
+                            FontName = name
+                        if n.nameID == 5:
+                            Version = name
 
-    Prop = ModuleProp(family_name.replace(' ', '-').lower(),
+    if not has_regular:
+        print('缺少常规 (Normal, Regular) 字体')
+        exit()
+
+    Prop = ModuleProp(FontName.replace(' ', '-').lower(),
                       FontName,
                       Version,
                       VersionCode,
@@ -153,11 +195,6 @@ def zip_font_module(selected_dict: dict):
     '''打包字体模块'''
     print('packing font module ...')
     fontfiles = selected_dict.keys()
-    has_regular = 4 in selected_dict.values()
-    if not has_regular:
-        print('所选字体: {}'.format(fontfiles))
-        print('缺少常规 (Normal, Regular) 字体')
-        exit()
     if os.path.exists('outs'):
         shutil.rmtree('outs')
     shutil.copytree('template', 'outs')
@@ -165,9 +202,10 @@ def zip_font_module(selected_dict: dict):
     for f in fontfiles:
         shutil.copy2(f,
                      'outs/system/fonts/fontw{}.ttf'.format(selected_dict[f]))
-    shutil.make_archive('{} {}'.format(FontName, Version),
+    shutil.make_archive('{}_{}'.format(FontName, Version).replace(' ', '_'),
                         'zip',
                         'outs')
+
 
 @atexit.register
 def clean():
@@ -183,7 +221,7 @@ def input_select(font_families: dict):
     print('发现字体:')
     for i, e in enumerate(font_families.keys()):
         key_dict[i] = e
-        print('{}:\t{}'.format(i, ', '.join(font_families[e].name)))
+        print('{}:\t{}'.format(i, font_families[e].name))
     print('选择字体 (输入序号): ', end='')
     i = input()
     return key_dict[int(i)]
@@ -198,12 +236,27 @@ if __name__ == '__main__':
     if sys.argv[1] in ['?', '/?', '-h', '--help']:
         help()
         exit()
+    try:
+        optlist, args = getopt.getopt(sys.argv[1:], 's')
+    except GetoptError as e:
+        print(e)
+        help()
+        exit()
 
-    extra_fonts(sys.argv[1])
+    for op in optlist:
+        if op[0] == '-s':
+            Full = False
+
+    extra_fonts(args[0])
     if not os.path.exists(FontHomeDir) or os.listdir(FontHomeDir) == []:
         print('未解压出字体文件')
         exit()
 
     font_families = get_font_family()
-    selected_dict = select_font(font_families, input_select(font_families))
+    selected_dict = dict()
+    if Full:
+        selected_dict = select_font(font_families, input_select(font_families))
+    else:
+        selected_dict = select_font(font_families, None)
     zip_font_module(selected_dict)
+    print('打包成功, 正在清理...')

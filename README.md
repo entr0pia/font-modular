@@ -6,9 +6,11 @@
 ## 使用方法
 
 ```shell
-python mkm.py path_to_ttf_font(s)
+python mkm.py [-s] path_to_ttf_font(s)
 ```
+
+如果你的字体压缩包或目录里有多种字体或字型, 请加```-s```参数
+
 
 ## ToDo
 - 对TTC的支持
-- 对缺少```nameID=16```字体的兼容
