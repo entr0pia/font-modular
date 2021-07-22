@@ -3,7 +3,7 @@
 @作者: 风沐白
 @文件: mkm.py
 @描述: 快速打包 Magsik 字体模块
-@版本: v2.1.0
+@版本: v2.1.1
 '''
 
 import os
@@ -254,7 +254,7 @@ if __name__ == '__main__':
 
     font_families = get_font_family()
     selected_dict = dict()
-    if Full:
+    if not Full:
         selected_dict = select_font(font_families, input_select(font_families))
     else:
         selected_dict = select_font(font_families, None)
