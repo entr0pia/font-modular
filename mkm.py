@@ -185,7 +185,7 @@ def select_font(font_families: dict, family_name: str):
                       FontName,
                       Version,
                       VersionCode,
-                      '落霞孤鹜 [lxgwshare], entr0pia@Github',
+                      'entr0pia@Github, 落霞孤鹜 [lxgwshare]',
                       '{} with {} Weight(s)'.format(FontName, len(selected)),
                       19000)
     return selected
