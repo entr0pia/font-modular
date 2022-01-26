@@ -1,6 +1,7 @@
-id=lxgwttftemplatec
+# id 只能填 字母 数字 半角符号
+id=FontTemplateS
 name=TTF 字体套用模板（多字重）
-version=v3.2
-versionCode=8
-author=落霞孤鹜 [lxgwshare]
-description=【使用方法】将喜爱的ttf格式字体按字重（粗细）依次重命名为「fontw1.ttf」~「fontw9.ttf」复制到模块的「system/fonts」目录下刷入重启。w4为常规字重，系统默认显示正文为此字重。w1为极细，w2~w3为细体，w5为中粗，w6~w7为粗体，w8~w9为特粗。此模块适用于 Magisk 20.4 及以上版本，最低兼容 Magisk 19。 内部的 RobotoFake 字体用于提供度量信息，防止出现偏移和行距问题，请勿轻易删除。 微信公众号：霞鹜（lxgwshare）；微博：孤鹜先森；酷安/少数派：落霞孤鹜lxgw；酷安看看号：孤鹜字体。
+version=Simple v3.3.211110
+versionCode=1
+author=lxgw (github.com/lxgw)
+description=用于制作 Magisk 字体模块，支持 9 个字重，每个字重各一个 ttf 文件。微信公众号：霞鹜（lxgwshare）；微博：孤鹜先森；酷安/少数派：落霞孤鹜lxgw。 GitHub 项目地址：https://github.com/lxgw/simple-cjk-font-magisk-module-template ，使用说明请见 README.md 文件。

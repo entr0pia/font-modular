@@ -3,7 +3,7 @@
 @作者: 风沐白
 @文件: mkm.py
 @描述: 快速打包 Magsik 字体模块
-@版本: v2.1.1
+@版本: v2.2
 '''
 
 import os
@@ -21,7 +21,7 @@ FontName = None
 Version = None
 Prop = None
 FontHomeDir = 'fonts'
-VersionCode = time.strftime("%y%m%d", time.localtime())
+VersionCode = time.strftime("%Y%m%d", time.localtime())
 Width = {100: 1,
          200: 2,
          300: 3,
@@ -80,7 +80,8 @@ class ModuleProp():
                 lines.append('versionCode={}\n'.format(self.versionCode))
                 lines.append('minMagisk={}\n'.format(self.minMagisk))
                 lines.append('author={}\n'.format(self.author))
-                lines.append('description={}'.format(self.description))
+                lines.append('description={}\n'.format(self.description))
+                lines.append('updateJson=https://raw.githubusercontent.com/entr0pia/font-modular/master/update.json\n')
                 f.writelines(lines)
         else:
             print('模板文件可能已损坏')
@@ -187,7 +188,7 @@ def select_font(font_families: dict, family_name: str):
                       VersionCode,
                       'entr0pia@Github, 落霞孤鹜 [lxgwshare]',
                       '{} with {} Weight(s)'.format(FontName, len(selected)),
-                      19000)
+                      20400)
     return selected
 
 
