@@ -18,6 +18,17 @@
    - **系统标题文本、加粗文本调用的粗字重（即 Bold 字重）**，`x` 数值为 7，即字体文件名为 `fontw7.ttf`；
    - Light、Medium 字重 `x` 分别为 3 和 5，`x` 越小则字重越细，越大则字重越粗；
    - 本字体模块模板支持 9 个字重。
+       | x 值 | 字重（Font-Weight） | 中文名称 |
+       | ---- | ------------------- | -------- |
+       | 1    | Thin (100)          | 极细     |
+       | 2    | UltraLight (200)    | 纤细     |
+       | 3    | Light (300)         | 细体     |
+       | 4    | Regular (400)       | 常规     |
+       | 5    | Medium (500)        | 中等     |
+       | 6    | SemiBold (600)      | 次粗     |
+       | 7    | Bold (700)          | 粗体     |
+       | 8    | ExtraBold (800)     | 特粗     |
+       | 9    | Heavy/Black (900)   | 超粗     |
 4. 模块根目录的 `module.prop` 用于存放模块信息，如模块的名称、版本号、作者等。
    - `id`：模块的代号，仅可包括**字母、数字及半角符号，不包含空格**。**相同 id 的 Magisk 模块不能共存。**
    - `name`：模块名称，可任意填写。
@@ -34,11 +45,12 @@
 
 ## 注意事项
 
-1. `/system/fonts` 目录内的 **EmptyFont** 为空字体文件，为 Android 默认西文字体 Roboto 的掏空字体，主要提供度量和字重信息，**请勿轻易删除。**
-2. `/system/product` 文件夹内的内容用以覆盖类原生 Android 系统内置的 Google Sans 字体，实现所替换字体在类原生 ROM 上的全局覆盖。若想保留原生 ROM 内置的 Google Sans 字体，请将模块内的 `/system/product` 文件夹删除。
+1. `/system/fonts` 目录内的 **EmptyFont** 为空字体文件，为 Android 默认西文字体 Roboto 的掏空字体，主要提供度量和字重信息，**请勿轻易删除。** *（灵感来自 [极限社区](http://bbs.themex.net) RadarNyan，这个网站已经进不去了。）*
+2. `/system/product` 文件夹内的内容用以覆盖类原生 Android 系统内置的 Google Sans 字体，实现所替换字体在类原生 ROM 上的全局覆盖。若想保留原生 ROM 内置的 Google Sans 字体，请将模块内的 `/system/product` 文件夹删除。 *由于目前版本（0.4.3）的 Shamiko 下，使用本模板制作的字体模块会导致排除列表内勾选的应用闪退，经排查为 fonts_customization.xml 的原因，现已将该文件删除，回到旧版模块模板屏蔽 Google Sans 的方式——直接用空字体替换 Google Sans。*
 3. `/system/etc/fonts.xml` 为字体配置文件，已经过调整以调用空字体及自定义字体，经本人所持有的两部 Android 手机测试 *(Redmi Note 5, Pixel Expericence 12.0, Android 12; Redmi K20 Pro, crDroid 7.9, Android 11)* 均可正常使用，**理论上**可兼容 Android 12 和 Android 11，**但不保证所有 ROM 均能正常使用**。不同 ROM 调用字体的配置文件可能不同，请参阅下面的 **「兼容性调整」** 。
 4. **本模块模板最低支持 Magisk 20.4。**
-5. 请不要在用过 Magisk Hide 或者 Zygisk 之后刷入任何字体模块，会导致被选中的应用闪退。
+5. ~~请不要在用过 Magisk Hide 或者 Zygisk 之后的 Android 12 系统刷入本模板制作的任何字体模块，会导致被选中的应用闪退。~~ Android 12 需要使用 24.0 及以上版本的 Magisk，开启 Zygisk，配合 Shamiko 0.2.0 及以上版本，并在 Magisk 中取消「遵守排除列表」勾选，隐藏 ROOT 同时防止排除列表内的应用闪退。
+6. 想要更加高级的自定义模板，可参阅 [高级版字体模块模板](https://github.com/lxgw/advanced-cjk-font-magisk-module-template)，可自行搭配西文、中文、日文和韩语字体，同样支持 9 个字重。
 
 ## 兼容性调整 <sub>仅供参考</sub>
 
