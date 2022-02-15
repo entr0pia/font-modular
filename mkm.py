@@ -21,7 +21,7 @@ Full = True
 FontName = None
 Version = None
 Prop = None
-FontHomeDir = 'fonts'
+FontHomeDir = 'fonts_tmp'
 VersionCode = time.strftime("%Y%m%d", time.localtime())
 Width = {100: 1,
          200: 2,
@@ -215,8 +215,8 @@ def zip_font_module(selected_dict: dict):
 @atexit.register
 def clean():
     '''清理工作区'''
-    if os.path.exists('fonts'):
-        shutil.rmtree('fonts')
+    if os.path.exists('fonts_tmp'):
+        shutil.rmtree('fonts_tmp')
     if os.path.exists('outs'):
         shutil.rmtree('outs')
 

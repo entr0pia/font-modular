@@ -3,5 +3,5 @@
 *.zip
 *.pyc
 __pycache__
-fonts
+fonts_tmp
 outs
