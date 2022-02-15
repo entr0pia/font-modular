@@ -1,0 +1,2 @@
+*.sh text eol=lf
+update-binary text eol=lf

@@ -13,6 +13,7 @@ import time
 import getopt
 from getopt import GetoptError
 import atexit
+import json
 from py7zr import pack_7zarchive, unpack_7zarchive
 from fontTools.ttLib import TTFont, TTLibError
 
@@ -81,7 +82,8 @@ class ModuleProp():
                 lines.append('minMagisk={}\n'.format(self.minMagisk))
                 lines.append('author={}\n'.format(self.author))
                 lines.append('description={}\n'.format(self.description))
-                lines.append('updateJson=https://raw.githubusercontent.com/entr0pia/font-modular/master/update.json\n')
+                lines.append(
+                    'updateJson=https://raw.githubusercontent.com/entr0pia/font-modular/master/update.json\n')
                 f.writelines(lines)
         else:
             print('模板文件可能已损坏')
@@ -203,9 +205,11 @@ def zip_font_module(selected_dict: dict):
     for f in fontfiles:
         shutil.copy2(f,
                      'outs/system/fonts/fontw{}.ttf'.format(selected_dict[f]))
-    shutil.make_archive('{}_{}'.format(FontName, Version).replace(' ', '_'),
+    zip_name = '{}_{}'.format(FontName, Version).replace(' ', '_')
+    shutil.make_archive(zip_name,
                         'zip',
                         'outs')
+    update_json(zip_name)
 
 
 @atexit.register
@@ -226,6 +230,17 @@ def input_select(font_families: dict):
     print('选择字体 (输入序号): ', end='')
     i = input()
     return key_dict[int(i)]
+
+
+def update_json(zip_name):
+    with open('update.json','w') as f:
+        json.dump({"version": Version,
+                   "versionCode": VersionCode,
+                   "zipUrl": f'https://github.com/entr0pia/font-modular/releases/latest/download/{zip_name}.zip',
+                   "changelog": "https://raw.githubusercontent.com/entr0pia/font-modular/master/change.log"},
+                   f,
+                   indent=4)
+    return
 
 
 if __name__ == '__main__':
