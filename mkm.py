@@ -17,7 +17,7 @@ import json
 from py7zr import pack_7zarchive, unpack_7zarchive
 from fontTools.ttLib import TTFont, TTLibError
 
-Full = True
+Full = False
 FontName = None
 Version = None
 Prop = None
