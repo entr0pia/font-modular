@@ -3,7 +3,7 @@
 @作者: 风沐白
 @文件: mkm.py
 @描述: 快速打包 Magsik 字体模块
-@版本: v2.3
+@版本: v2.3.1
 '''
 
 import os
@@ -23,7 +23,7 @@ Version = None
 Prop = None
 FontHomeDir = 'fonts_tmp'
 VersionCode = time.strftime("%Y%m%d", time.localtime())
-Width = {100: 1,
+Weight = {100: 1,
          200: 2,
          300: 3,
          400: 4,
@@ -152,7 +152,7 @@ def extra_fonts(filename: str):
 def select_font(font_families: dict, family_name: str):
     '''筛选字体'''
     global FontName, Version, Prop
-    # {file_path: width}
+    # {file_path: Weight}
     has_regular = False
     selected = dict()
     files = []
@@ -168,7 +168,11 @@ def select_font(font_families: dict, family_name: str):
         # 跳过斜体
         if font['OS/2'].fsSelection & 1 == 1:
             continue
-        selected[i] = Width[font['OS/2'].usWeightClass]
+        weight = font['OS/2'].usWeightClass
+        # 跳过不兼容的字重
+        if weight not in Weight.keys():
+            continue
+        selected[i] = Weight[weight]
         if selected[i] == 4:
             has_regular = True
             if family_name == None:
